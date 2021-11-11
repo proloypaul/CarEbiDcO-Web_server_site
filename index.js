@@ -43,6 +43,27 @@ async function run(){
             const result = await usersCollection.insertOne(userData)
             res.json(result)
         });
+        // PUT method to update user when signIn with google
+
+        app.put('/users', async (req, res) => {
+            const user = req.body 
+            const filter = {email: user.email}
+            const options = {upsert: true} 
+            const updateDoc = {$set: user}
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+            res.json(result)
+        })
+        // put method to update user with admin
+        app.put('/users/admin', async (req, res) => {
+            const admin = req.body
+            console.log(admin.email)
+            // console.log("admin data", admin)
+            const filter = {email: admin.email} 
+            const updateDoc = {$set: {role: "admin"}}
+            const result = await usersCollection.updateOne(filter, updateDoc)
+            console.log("update user result", result)
+            res.json(result)
+        })
 
         // POST method to insert user order in database
         app.post('/orders', async (req, res) => {
@@ -55,12 +76,21 @@ async function run(){
         // GET method to load only user order
         app.get('/orders/:email', async (req, res) => {
             const userEmail = req.params.email 
-            console.log(userEmail)
+            // console.log(userEmail)
             const query = {email: userEmail}
             const cursor = ordersCollection.find(query)
             const result = await cursor.toArray()
 
             // console.log("find user order result", result)
+            res.json(result)
+        })
+
+        // DELETE method to delete order
+        app.delete('/orders/:id', async (req, res) => {
+            const dltId = req.params.id 
+            const query = {_id: ObjectId(dltId)}
+            // console.log("delete user id", dltId)
+            const result = await ordersCollection.deleteOne(query)
             res.json(result)
         })
 
