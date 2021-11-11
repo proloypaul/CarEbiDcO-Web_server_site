@@ -20,6 +20,7 @@ async function run(){
         const productsCollection = database.collection('products')
         const usersCollection = database.collection('users')
         const ordersCollection = database.collection('orders')
+        const reviewsCollection = database.collection('reviews')
         // GET method to find all data from database 
         app.get('/products', async (req, res) => {
             const cursor = productsCollection.find({})
@@ -61,7 +62,7 @@ async function run(){
             const filter = {email: admin.email} 
             const updateDoc = {$set: {role: "admin"}}
             const result = await usersCollection.updateOne(filter, updateDoc)
-            console.log("update user result", result)
+            // console.log("update user result", result)
             res.json(result)
         })
 
@@ -93,6 +94,34 @@ async function run(){
             const result = await ordersCollection.deleteOne(query)
             res.json(result)
         })
+
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email
+            // console.log("user email", email)
+            const query = {email: email}
+            const result = await usersCollection.findOne(query)
+            let isAdmin = false 
+            if(result?.role === "admin"){
+                isAdmin = true 
+            }
+            res.json({admin: isAdmin})
+        })
+
+        // post review data 
+        app.post('/reviews', async (req, res) => {
+            const reviewsData = req.body
+            const result = await reviewsCollection.insertOne(reviewsData)
+            res.json(result)
+        })
+
+        // get review data
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewsCollection.find({})
+            const result = await cursor.toArray()
+            res.json(result)
+        })
+
+
 
     }finally{
         // await client.close()
