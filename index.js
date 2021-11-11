@@ -19,6 +19,7 @@ async function run(){
         const database = client.db('carbidcoWeb')
         const productsCollection = database.collection('products')
         const usersCollection = database.collection('users')
+        const ordersCollection = database.collection('orders')
         // GET method to find all data from database 
         app.get('/products', async (req, res) => {
             const cursor = productsCollection.find({})
@@ -40,6 +41,26 @@ async function run(){
             const userData = req.body 
             // console.log("user data", userData)
             const result = await usersCollection.insertOne(userData)
+            res.json(result)
+        });
+
+        // POST method to insert user order in database
+        app.post('/orders', async (req, res) => {
+            const userOrder = req.body
+            // console.log(userOrder)
+            const result = await ordersCollection.insertOne(userOrder)
+            res.json(result)
+        });
+
+        // GET method to load only user order
+        app.get('/orders/:email', async (req, res) => {
+            const userEmail = req.params.email 
+            console.log(userEmail)
+            const query = {email: userEmail}
+            const cursor = ordersCollection.find(query)
+            const result = await cursor.toArray()
+
+            // console.log("find user order result", result)
             res.json(result)
         })
 
