@@ -23,9 +23,16 @@ async function run(){
         const reviewsCollection = database.collection('reviews')
         // GET method to find all data from database 
         app.get('/products', async (req, res) => {
+            const size = parseInt(req.query.size)
+            // console.log(size)
             const cursor = productsCollection.find({})
-            const result = await cursor.toArray()
-            res.json(result)
+            let products;
+            if(size){
+                products = await cursor.limit(size).toArray()
+            }else{
+                products = await cursor.toArray()
+            }
+            res.json(products)
         })
 
         // GET method to find one data from database using id
@@ -36,6 +43,14 @@ async function run(){
             const result = await productsCollection.findOne(query)
             res.json(result)    
         });
+
+        app.post('/products', async (req, res) => {
+            const productData = req.body 
+            // console.log(productData)
+            const result = await productsCollection.insertOne(productData)
+            res.json(result)
+            console.log(result)
+        })
 
         // POST method to user data insert in database
         app.post('/users', async (req, res) => {
@@ -73,6 +88,13 @@ async function run(){
             const result = await ordersCollection.insertOne(userOrder)
             res.json(result)
         });
+
+        // GET method to find orders all data from database
+        app.get('/orders', async (req, res) => {
+            const cursor = ordersCollection.find({})
+            const result = await cursor.toArray()
+            res.json(result)
+        })
 
         // GET method to load only user order
         app.get('/orders/:email', async (req, res) => {
