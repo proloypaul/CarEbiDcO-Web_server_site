@@ -167,7 +167,8 @@ async function run(){
         // await client.close()
     }
 }
-run().catch(console.dir)
+// common code  
+run().catch(console.dir) // declare run function 
 
 app.get('/', (req, res) => {
     res.send("carbidco server runing")
