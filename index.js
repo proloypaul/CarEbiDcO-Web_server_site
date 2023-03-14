@@ -151,6 +151,16 @@ async function run(){
             res.json(result)
         })
 
+        // user payment seystem get user data using id
+        app.get('/orders/:id', async (req, res) => {
+            const userId = req.params.id 
+            console.log("user id", userId)
+            // const query = {_id: ObjectId(userId)}
+            // const result = await ordersCollection.findOne(query)
+            // res.json(result)
+
+        })
+
 
 
     }finally{
